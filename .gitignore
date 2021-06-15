@@ -1,1 +1,4 @@
 .idea
+notebooks/.ipynb_checkpoints/**/*
+notebooks/.Trash-0/**/*
+notebooks/sulfur/resources/**/*
