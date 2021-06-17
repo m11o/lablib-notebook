@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
+from os.path import basename, splitext
 from math import isnan
 
 
@@ -10,6 +11,7 @@ class CaImageCSV:
 
     def __init__(self, csv_path):
         self.csv_path = csv_path
+        self.animal_number = self.__fetch_animal_number_from_path()
         self.data_frame = self.read_csv()
         self.engrams = self.__load_engrams()
         self.cell_names = list(self.engrams.keys())
@@ -39,6 +41,14 @@ class CaImageCSV:
 
     def is_engram(self, cell_name) -> bool:
         return self.engrams[cell_name]
+
+    def __fetch_animal_number_from_path(self):
+        file_name = splitext(basename(self.csv_path))[0]
+        matched = re.match('^(ID[0-9]{6}Cre[A-Z])_.+$', file_name)
+        if not matched:
+            raise ValueError('不正なANIMAL IDです')
+
+        return matched.group(1)
 
     def __sort_data_frame(self):
         self.data_frame.sort_index(axis=0, level=[2, 1], inplace=True)
