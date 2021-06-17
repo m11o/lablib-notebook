@@ -89,13 +89,17 @@ class CaImageCSV:
     @staticmethod
     def optimize_std(data_frame):
         for cell_name, items in data_frame.iteritems():
-            items = items.astype(float)
-            std = items.std(skipna=False)
-            items /= std
-
-            data_frame.loc[:, cell_name] = items
+            data_frame.loc[:, cell_name] = CaImageCSV.optimize_std_by_series(items)
 
         return data_frame
+
+    @staticmethod
+    def optimize_std_by_series(series) -> pd.Series:
+        series = series.astype(float)
+        std = series.std(skipna=False)
+        series /= std
+
+        return series
 
     @staticmethod
     def __strip_list(array) -> None:
