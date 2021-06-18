@@ -27,6 +27,8 @@ class CaImageCSV:
 
         self.__sort_data_frame()
 
+        self.data_frame = self.data_frame.astype(float, copy=True)
+
     def read_csv(self) -> pd.DataFrame:
         return pd.read_csv(self.csv_path, header=None, index_col=None, low_memory=False)
 
