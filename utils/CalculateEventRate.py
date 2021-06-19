@@ -5,7 +5,7 @@ import numpy as np
 class CalculateEventRate:
     EVENT_RATE_THRESHOLD = 1.5
 
-    def __init__(self, animal_name, context_name, engrams, csv_path=None, threshold=0.0):
+    def __init__(self, animal_name, context_name, engrams=None, csv_path=None, threshold=0.0):
         self.animal_name = animal_name
         self.context_name = context_name
         self.engrams = engrams
@@ -50,12 +50,16 @@ class CalculateEventRate:
 
     def __append_event_rate(self, cell_name, event_rate):
         self.event_rates_by_cells = np.append(self.event_rates_by_cells, event_rate)
-        if self.__is_engram(cell_name):
-            self.engram_event_rates_by_cells = np.append(self.engram_event_rates_by_cells, event_rate)
-        else:
-            self.non_engram_event_rates_by_cells = np.append(self.non_engram_event_rates_by_cells, event_rate)
+        if self.engrams is not None:
+            if self.__is_engram(cell_name):
+                self.engram_event_rates_by_cells = np.append(self.engram_event_rates_by_cells, event_rate)
+            else:
+                self.non_engram_event_rates_by_cells = np.append(self.non_engram_event_rates_by_cells, event_rate)
 
     def __is_engram(self, cell_name) -> bool:
+        if self.engrams is None:
+            raise ValueError
+
         return self.engrams[cell_name]
 
     def __mean_event_rate_by_cells(self):
