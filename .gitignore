@@ -3,3 +3,4 @@ notebooks/.ipynb_checkpoints/**/*
 notebooks/.Trash-0/**/*
 notebooks/sulfur/resources/**/*
 **/.ipynb_checkpoints
+**/__pycache__
