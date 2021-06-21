@@ -91,6 +91,8 @@ class CaImageCSV:
     @staticmethod
     def optimize_std(data_frame):
         for cell_name, items in data_frame.iteritems():
+            if items.isnull().all() or (items == 0.0).all():
+                continue
             data_frame.loc[:, cell_name] = CaImageCSV.optimize_std_by_series(items)
 
         return data_frame
