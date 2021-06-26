@@ -44,6 +44,15 @@ class CaImageCSV:
     def is_engram(self, cell_name) -> bool:
         return self.engrams[cell_name]
 
+    def engram_cells(self):
+        return self.__fetch_engram_cell_names(is_engram=True)
+
+    def non_engram_cells(self):
+        return self.__fetch_engram_cell_names(is_engram=False)
+
+    def __fetch_engram_cell_names(self, is_engram=True):
+        return [cell_name for cell_name, value in self.engrams.items() if is_engram == value]
+
     def __fetch_animal_number_from_path(self):
         file_name = splitext(basename(self.csv_path))[0]
         matched = re.match('^(ID[0-9]{6}Cre[A-Z])_.+$', file_name)
@@ -79,7 +88,8 @@ class CaImageCSV:
 
             engrams[matched.group(1)] = not isnan(float(items[self.ENGRAM_ROW_INDEX]))
 
-        return engrams
+        sorted_list = sorted(engrams.items(), key=lambda x:x[0])
+        return dict(sorted_list)
 
     def __load_contexts(self) -> list:
         contexts = self.data_frame.iloc[:, 1]
