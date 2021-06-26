@@ -23,13 +23,16 @@ class CalculateEventRate:
         self.engram_event_rate = 0.0
         self.non_engram_event_rate = 0.0
 
-        self.high_event_rate_cells = []
+        self.excluded_cells = []
 
-    def calc_event_rate(self):
+    def calc_event_rate(self, excluded_cells=[]):
         for cell_name, values in self.data_frame.iteritems():
             values = values.astype(float)
             if values.isnull().all():
-                # self.high_event_rate_cells.append(cell_name)
+                self.excluded_cells.append(cell_name)
+                continue
+
+            if cell_name in excluded_cells:
                 continue
 
             if (values == 0).all():
@@ -38,8 +41,8 @@ class CalculateEventRate:
             event_count = len(values[values > self.threshold])
             event_rate = event_count / self.times
 
-            if event_rate >= self.EVENT_RATE_THRESHOLD:
-                self.high_event_rate_cells.append(cell_name)
+            # if event_rate >= self.EVENT_RATE_THRESHOLD:
+            #     self.high_event_rate_cells.append(cell_name)
 
             self.__append_event_rate(cell_name, event_rate)
 
