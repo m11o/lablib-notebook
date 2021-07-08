@@ -2,5 +2,6 @@
 notebooks/.ipynb_checkpoints/**/*
 notebooks/.Trash-0/**/*
 notebooks/sulfur/resources/**/*
+notebooks/fluorine/resources/**/*
 **/.ipynb_checkpoints
 **/__pycache__
