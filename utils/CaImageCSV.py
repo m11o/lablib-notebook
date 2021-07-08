@@ -4,6 +4,8 @@ import re
 from os.path import basename, splitext
 from math import isnan
 
+import utils.sulfur.constant as const
+
 
 class CaImageCSV:
     CELL_NAME_ROW_INDEX = 2
@@ -62,13 +64,20 @@ class CaImageCSV:
         return matched.group(1)
 
     def __sort_data_frame(self):
-        self.data_frame.sort_index(axis=0, level=[2, 1], inplace=True)
+        self.data_frame.sort_index(axis=0, level=[1, 0], inplace=True)
         self.data_frame.sort_index(axis=1, inplace=True)
 
     def __build_index(self) -> pd.MultiIndex:
         pre_index = self.data_frame.iloc[:, 1:3]
         pre_index.iloc[:, 1] = pre_index.iloc[:, 1].astype(float)
-        return pd.MultiIndex.from_frame(pre_index)
+        context_series = pre_index.iloc[:, 0]
+        for context_name in const.CONTEXTS:
+            context_indexes = context_series[context_series == context_name].index
+            start_index = context_indexes[0]
+            end_index = context_indexes[-1]
+            context_series.loc[start_index:end_index] = context_name
+
+        return pd.MultiIndex.from_frame(pre_index, names=['context', 'time'])
 
     def __drop_useless_rows(self):
         self.data_frame.drop(index=[0, 1, 2], inplace=True)
