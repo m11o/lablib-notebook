@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
+
+from scipy.stats import ks_2samp
 
 import seaborn as sns
 
@@ -20,7 +19,7 @@ class TimeCorrelationViewer:
         self.non_engram_df = non_engram_df.astype(float)
         self.time_ticks = list(range(0, len(self.shuffle_df) + 1, 5))
 
-    def view_heatmap(self):
+    def view_heatmap(self, title=None):
         fig, axes = plt.subplots(ncols=3, figsize=(25, 7), sharey=True, tight_layout=False, dpi=200)
 
         ax_for_engram = sns.heatmap(self.engram_df, ax=axes[0], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX, square=True, cmap=self.HEATMAP_CMAP)
@@ -61,6 +60,8 @@ class TimeCorrelationViewer:
         color_bar_for_shuffle.ax.tick_params(labelsize=self.DEFAULT_FONTSIZE)
         ax_for_shuffle.invert_yaxis()
 
+        if title is not None:
+            fig.suptitle(title, fontsize=22, fontweight=self.DEFAULT_FONT_WEIGHT)
         fig.show()
 
     def view_sum_of_correlation_bar(self):
@@ -70,6 +71,9 @@ class TimeCorrelationViewer:
         abs_engram_sum = self.engram_df.abs().sum()
         abs_non_engram_sum = self.non_engram_df.abs().sum()
 
+        _, pvalue = ks_2samp(abs_engram_sum, abs_non_engram_sum)
+        ax.text(0.05, 0.1, 'p = %f' % pvalue, transform=ax.transAxes, fontstyle='italic', fontweight='bold')
+
         ax.plot(abs_shuffle_sum, label='shuffled cells')
         ax.plot(abs_engram_sum, label='engram cells')
         ax.plot(abs_non_engram_sum, label='non-engram cells')
@@ -78,4 +82,5 @@ class TimeCorrelationViewer:
         ax.set_title('Variation from shuffled cells', fontsize=16)
         ax.set_ylabel('Sum of correlations', fontsize=14)
         ax.set_xlabel('Reference time (s)', fontsize=14)
+
         fig.show()
