@@ -13,11 +13,11 @@ class TimeCorrelationViewer:
     DEFAULT_FONTSIZE = 20
     DEFAULT_FONT_WEIGHT = 'bold'
 
-    def __init__(self, shuffle_df, engram_df, non_engram_df):
+    def __init__(self, shuffle_df, engram_df, non_engram_df, ticks_span=5):
         self.shuffle_df = shuffle_df.astype(float)
         self.engram_df = engram_df.astype(float)
         self.non_engram_df = non_engram_df.astype(float)
-        self.time_ticks = list(range(0, len(self.shuffle_df) + 1, 5))
+        self.time_ticks = list(range(0, len(self.shuffle_df) + 1, ticks_span))
 
     def view_heatmap(self, title=None):
         fig, axes = plt.subplots(ncols=3, figsize=(25, 7), sharey=True, tight_layout=False, dpi=200)
@@ -32,7 +32,7 @@ class TimeCorrelationViewer:
         axes[0].set_title('Engram cells', fontsize=self.DEFAULT_FONTSIZE, fontweight=self.DEFAULT_FONT_WEIGHT)
 
         color_bar_for_engram = ax_for_engram.collections[0].colorbar
-        color_bar_for_engram.ax.tick_params(labelsize=self.DEFAULT_FONTSIZE)
+        color_bar_for_engram.ax.tick_params(labelsize=15)
         ax_for_engram.invert_yaxis()
 
         ax_for_non_engram = sns.heatmap(self.non_engram_df, ax=axes[1], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX, square=True, cmap=self.HEATMAP_CMAP)
@@ -44,7 +44,7 @@ class TimeCorrelationViewer:
         axes[1].set_title('Non-engram cells', fontsize=self.DEFAULT_FONTSIZE, fontweight=self.DEFAULT_FONT_WEIGHT)
 
         color_bar_for_non_engram = ax_for_non_engram.collections[0].colorbar
-        color_bar_for_non_engram.ax.tick_params(labelsize=self.DEFAULT_FONTSIZE)
+        color_bar_for_non_engram.ax.tick_params(labelsize=15)
         ax_for_non_engram.invert_yaxis()
 
         ax_for_shuffle = sns.heatmap(self.shuffle_df, ax=axes[2], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX,
@@ -57,7 +57,7 @@ class TimeCorrelationViewer:
         axes[2].set_title('Shuffled cells', fontsize=self.DEFAULT_FONTSIZE, fontweight=self.DEFAULT_FONT_WEIGHT)
 
         color_bar_for_shuffle = ax_for_shuffle.collections[0].colorbar
-        color_bar_for_shuffle.ax.tick_params(labelsize=self.DEFAULT_FONTSIZE)
+        color_bar_for_shuffle.ax.tick_params(labelsize=15)
         ax_for_shuffle.invert_yaxis()
 
         if title is not None:
