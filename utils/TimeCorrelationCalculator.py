@@ -1,21 +1,23 @@
 import pandas as pd
 import numpy as np
 
-from CaImageCSV import CaImageCSV
+from context_data_csv import ContextDataCSV
+from matrix_optimizer import MatrixOptimizer
 
 
 class TimeCorrelationCalculator:
     SHUFFLE_COUNT = 1000
 
-    def __init__(self, csv_file_path):
-        self.csv_file_path = csv_file_path
+    def __init__(self, animal_name, context_name):
+        self.animal_name = animal_name
+        self.context_name = context_name
 
-        self.csv = CaImageCSV(self.csv_file_path)
+        self.csv = ContextDataCSV(animal_name, context_name)
 
-    def calc(self, context_name, start, end):
+    def calc(self, start, end):
         seconds = end - start
 
-        df = self.csv.optimize_std(self.csv.filtered_by_context(context_name).astype(float).copy(deep=True))
+        df = MatrixOptimizer(self.csv.data_frame.copy(deep=True)).divide_sd()
         engram_df = self.__filtered_by_cells(df, self.csv.engram_cells())
         non_engram_df = self.__filtered_by_cells(df, self.csv.non_engram_cells())
 

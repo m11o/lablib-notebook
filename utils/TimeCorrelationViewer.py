@@ -6,8 +6,8 @@ import seaborn as sns
 
 
 class TimeCorrelationViewer:
-    SCALE_MIN = -0.06
-    SCALE_MAX = 0.06
+    SCALE_MIN = -0.05
+    SCALE_MAX = 0.1
     HEATMAP_CMAP = 'RdYlBu_r'
 
     DEFAULT_FONTSIZE = 20
@@ -23,7 +23,7 @@ class TimeCorrelationViewer:
     def draw(self, title=None):
         fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(25, 16), dpi=200)
 
-        ax_for_engram = sns.heatmap(self.engram_df, ax=axes[0][0], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX, square=True, cmap=self.HEATMAP_CMAP)
+        ax_for_engram = sns.heatmap(self.engram_df, ax=axes[0][0], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX, center=0.0, square=True, cmap=self.HEATMAP_CMAP)
         axes[0][0].set_xticks(self.time_ticks)
         axes[0][0].set_xticklabels(self.time_ticks, fontsize=self.DEFAULT_FONTSIZE, fontweight=self.DEFAULT_FONT_WEIGHT)
         axes[0][0].set_xlabel('Reference Time (s)', fontsize=self.DEFAULT_FONTSIZE)
@@ -36,7 +36,7 @@ class TimeCorrelationViewer:
         color_bar_for_engram.ax.tick_params(labelsize=15)
         ax_for_engram.invert_yaxis()
 
-        ax_for_non_engram = sns.heatmap(self.non_engram_df, ax=axes[0][1], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX, square=True, cmap=self.HEATMAP_CMAP)
+        ax_for_non_engram = sns.heatmap(self.non_engram_df, ax=axes[0][1], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX, center=0.0, square=True, cmap=self.HEATMAP_CMAP)
         axes[0][1].set_xticks(self.time_ticks)
         axes[0][1].set_xticklabels(self.time_ticks, fontsize=self.DEFAULT_FONTSIZE, fontweight=self.DEFAULT_FONT_WEIGHT)
         axes[0][1].set_xlabel('Reference Time (s)', fontsize=self.DEFAULT_FONTSIZE)
@@ -53,7 +53,7 @@ class TimeCorrelationViewer:
         non_engram_mean = self.non_engram_df.mean()
         self.view_time_correlation_plot(axes[0][2], shuffle_mean, engram_mean, non_engram_mean, title='Average of time correlation')
 
-        ax_for_shuffle_engram = sns.heatmap(self.shuffled_engram_df, ax=axes[1][0], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX, square=True, cmap=self.HEATMAP_CMAP)
+        ax_for_shuffle_engram = sns.heatmap(self.shuffled_engram_df, ax=axes[1][0], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX, center=0.0, square=True, cmap=self.HEATMAP_CMAP)
         axes[1][0].set_xticks(self.time_ticks)
         axes[1][0].set_xticklabels(self.time_ticks, fontsize=self.DEFAULT_FONTSIZE, fontweight=self.DEFAULT_FONT_WEIGHT)
         axes[1][0].set_xlabel('Reference Time (s)', fontsize=self.DEFAULT_FONTSIZE)
@@ -65,7 +65,7 @@ class TimeCorrelationViewer:
         color_bar_for_shuffle_engram.ax.tick_params(labelsize=15)
         ax_for_shuffle_engram.invert_yaxis()
 
-        ax_for_shuffle = sns.heatmap(self.shuffle_df, ax=axes[1][1], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX, square=True, cmap=self.HEATMAP_CMAP)
+        ax_for_shuffle = sns.heatmap(self.shuffle_df, ax=axes[1][1], robust=True, vmin=self.SCALE_MIN, vmax=self.SCALE_MAX, center=0.0, square=True, cmap=self.HEATMAP_CMAP)
         axes[1][1].set_xticks(self.time_ticks)
         axes[1][1].set_xticklabels(self.time_ticks, fontsize=self.DEFAULT_FONTSIZE, fontweight=self.DEFAULT_FONT_WEIGHT)
         axes[1][1].set_xlabel('Reference Time (s)', fontsize=self.DEFAULT_FONTSIZE)
