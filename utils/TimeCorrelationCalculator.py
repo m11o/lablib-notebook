@@ -52,7 +52,20 @@ class TimeCorrelationCalculator:
 
             self.__calc_time_correlation(seconds, corr_df_for_shuffle, shuffle_cells_correlations)
 
-        return [corr_df_for_shuffle / self.SHUFFLE_COUNT, corr_df_for_engram, corr_df_for_non_engram]
+        corr_df_for_shuffled_engram = pd.DataFrame(columns=list(range(seconds)), index=list(range(seconds)))
+        for n in range(self.SHUFFLE_COUNT):
+            random_time = np.random.randint(0, len(engram_df.index), size=len(engram_df.index))
+            shuffle_df = engram_df.iloc[random_time, :].copy(deep=True)
+            shuffle_times_correlations = []
+            for second in range(start, end):
+                frame_index = second * 10
+                shuffle_corr = self.__calculate_cell_correlation(shuffle_df, frame_index)
+
+                shuffle_times_correlations.append(shuffle_corr)
+
+            self.__calc_time_correlation(seconds, corr_df_for_shuffled_engram, shuffle_times_correlations)
+
+        return [corr_df_for_shuffle / self.SHUFFLE_COUNT, corr_df_for_shuffled_engram / self.SHUFFLE_COUNT, corr_df_for_engram, corr_df_for_non_engram]
 
     @staticmethod
     def __calc_time_correlation(seconds, correlation_for_time, correlation_for_cells):
