@@ -8,18 +8,26 @@ from matrix_optimizer import MatrixOptimizer
 class TimeCorrelationCalculator:
     SHUFFLE_COUNT = 1000
 
-    def __init__(self, animal_name, context_name):
+    def __init__(self, animal_name, context_name, data_frame=None, engram_cells=None, non_engram_cells=None):
         self.animal_name = animal_name
         self.context_name = context_name
 
-        self.csv = ContextDataCSV(animal_name, context_name)
+        if data_frame is not None and engram_cells is not None and non_engram_cells is not None:
+            self.data_frame = data_frame
+            self.engram_cells = engram_cells
+            self.non_engram_cells = non_engram_cells
+        else:
+            csv = ContextDataCSV(animal_name, context_name)
+            self.data_frame = csv.data_frame
+            self.engram_cells = csv.engram_cells()
+            self.non_engram_cells = csv.non_engram_cells()
 
     def calc(self, start, end):
         seconds = end - start
 
-        df = MatrixOptimizer(self.csv.data_frame.copy(deep=True)).divide_sd()
-        engram_df = self.__filtered_by_cells(df, self.csv.engram_cells())
-        non_engram_df = self.__filtered_by_cells(df, self.csv.non_engram_cells())
+        df = MatrixOptimizer(self.data_frame.copy(deep=True)).divide_sd()
+        engram_df = self.__filtered_by_cells(df, self.engram_cells)
+        non_engram_df = self.__filtered_by_cells(df, self.non_engram_cells)
 
         self.__dropna_and_fillna(df)
         self.__dropna_and_fillna(engram_df)
