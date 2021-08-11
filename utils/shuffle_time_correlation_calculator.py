@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from time_correlation_tool import calculate_time_correlation, calculate_cell_correlation
+from time_correlation_tool import calculate_time_correlation, calculate_cell_correlation, calculate_quantiles
 
 
 class ShuffleTimeCorrelationCalculator:
@@ -37,39 +37,17 @@ class ShuffleTimeCorrelationCalculator:
                                       self.average_variation_for_non_engram,
                                       self.abs_sum_variation_for_non_engram)
 
-    def engram_quantile_for_95(self):
-        average_quantile = pd.Series(index=self.average_variation_for_engram.columns)
-        abs_sum_quantile = pd.Series(index=self.abs_sum_variation_for_engram.columns)
+    def quantile_for_engram(self, quantile_value):
+        average_quantiles = calculate_quantiles(quantile_value, self.average_variation_for_engram)
+        abs_sum_quantiles = calculate_quantiles(quantile_value, self.abs_sum_variation_for_engram)
 
-        for index, values in self.average_variation_for_engram.iteritems():
-            average_quantile[index] = np.quantile(values, 0.95)
+        return [average_quantiles, abs_sum_quantiles]
 
-        for index, values in self.abs_sum_variation_for_engram.iteritems():
-            abs_sum_quantile[index] = np.quantile(values, 0.95)
+    def quantile_for_non_engram(self, quantile_value):
+        average_quantiles = calculate_quantiles(quantile_value, self.average_variation_for_non_engram)
+        abs_sum_quantiles = calculate_quantiles(quantile_value, self.abs_sum_variation_for_non_engram)
 
-        return [average_quantile, abs_sum_quantile]
-
-    def non_engram_quantile_for_95(self):
-        average_quantile = pd.Series(index=self.average_variation_for_non_engram.columns)
-        abs_sum_quantile = pd.Series(index=self.abs_sum_variation_for_non_engram.columns)
-
-        for index, values in self.average_variation_for_non_engram.iteritems():
-            average_quantile[index] = np.quantile(values, 0.95)
-
-        for index, values in self.abs_sum_variation_for_non_engram.iteritems():
-            abs_sum_quantile[index] = np.quantile(values, 0.95)
-
-        return [average_quantile, abs_sum_quantile]
-
-    def __calculate_quantiles(self, quantile_value, df, columns=None) -> pd.Series:
-        if columns is None:
-            columns = df.columns
-        quantile_series = pd.Series(index=columns)
-
-        for index, values in df.iteritems():
-            quantile_series[index] = np.quantile(values, quantile_value)
-
-        return quantile_series
+        return [average_quantiles, abs_sum_quantiles]
 
     def __calculate_shuffled(self, shuffle_index, shuffle_df, average_correlation, abs_sum_correlation):
         time_correlation_df = pd.DataFrame(columns=list(range(self.seconds)), index=list(range(self.seconds)))
