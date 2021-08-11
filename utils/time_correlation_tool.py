@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 
 def calculate_cell_correlation(df, frame_index, size=9):
@@ -23,3 +24,14 @@ def calculate_time_correlation(seconds, time_correlation_df, cell_correlation_df
             if time_correlation_df.at[i, j] is np.nan:
                 time_correlation_df.at[i, j] = 0.0
             time_correlation_df.at[i, j] += corr_sum / (cell_count * (cell_count - 1))
+
+
+def calculate_quantiles(quantile_value, df, columns=None) -> pd.Series:
+    if columns is None:
+        columns = df.columns
+    quantile_series = pd.Series(index=columns)
+
+    for index, values in df.iteritems():
+        quantile_series[index] = np.quantile(values, quantile_value)
+
+    return quantile_series
