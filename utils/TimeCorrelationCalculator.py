@@ -50,7 +50,7 @@ class TimeCorrelationCalculator:
         calculate_time_correlation(seconds, corr_df_for_engram, engram_cells_correlations)
         calculate_time_correlation(seconds, corr_df_for_non_engram, non_engram_cells_correlations)
 
-        shuffle_calculator = ShuffleTimeCorrelationCalculator(df, engram_df, non_engram_df, start, end)
+        shuffle_calculator = ShuffleTimeCorrelationCalculator(df, len(engram_df.columns), start, end)
         shuffle_calculator.calc()
 
         return [shuffle_calculator, corr_df_for_engram, corr_df_for_non_engram]
