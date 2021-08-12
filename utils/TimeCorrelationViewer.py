@@ -48,22 +48,20 @@ class TimeCorrelationViewer:
         ax_for_non_engram.invert_yaxis()
 
         engram_shuffle_mean, engram_abs_shuffle_sum = self.shuffle_calculator.quantile_for_engram(quantile_value)
-        non_engram_shuffle_mean, non_engram_abs_shuffle_sum = self.shuffle_calculator.quantile_for_non_engram(quantile_value)
         engram_mean, abs_engram_sum = self.engram_df.mean(), self.engram_df.abs().sum()
         non_engram_mean, abs_non_engram_sum = self.non_engram_df.mean(), self.non_engram_df.abs().sum()
-        self.view_time_correlation_plot(axes[1][0], engram_shuffle_mean, non_engram_shuffle_mean, engram_mean, non_engram_mean, title='Average of time correlation')
-        self.view_time_correlation_plot(axes[1][1], engram_abs_shuffle_sum, non_engram_abs_shuffle_sum, abs_engram_sum, abs_non_engram_sum, title='Variation from shuffle cells')
+        self.view_time_correlation_plot(axes[1][0], engram_shuffle_mean, engram_mean, non_engram_mean, title='Average of time correlation')
+        self.view_time_correlation_plot(axes[1][1], engram_abs_shuffle_sum, abs_engram_sum, abs_non_engram_sum, title='Variation from shuffle cells')
 
         if title is not None:
             fig.suptitle(title, fontsize=22, fontweight=self.DEFAULT_FONT_WEIGHT)
         fig.show()
 
-    def view_time_correlation_plot(self, ax, engram_shuffle_data, non_engram_shuffle_data, engram_data, non_engram_data, title):
+    def view_time_correlation_plot(self, ax, engram_shuffle_data, engram_data, non_engram_data, title):
         _, pvalue = ks_2samp(engram_data, non_engram_data)
         ax.text(0.05, 0.1, 'p = %f' % pvalue, transform=ax.transAxes, fontstyle='italic', fontweight='bold', fontsize=16)
 
         ax.plot(engram_shuffle_data, label='shuffled engram cells')
-        ax.plot(non_engram_shuffle_data, label='shuffled non-engram cells')
         ax.plot(engram_data, label='engram cells')
         ax.plot(non_engram_data, label='non-engram cells')
         ax.legend(loc='lower right', fontsize=15)
