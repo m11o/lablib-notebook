@@ -7,10 +7,9 @@ from time_correlation_tool import calculate_time_correlation, calculate_cell_cor
 class ShuffleTimeCorrelationCalculator:
     SHUFFLE_COUNT = 100
 
-    def __init__(self, all_df, engram_df, non_engram_df, start, end):
+    def __init__(self, all_df, shuffle_cell_size, start, end):
         self.all_df = all_df
-        self.engram_df = engram_df
-        self.non_engram_df = non_engram_df
+        self.shuffle_cell_size = shuffle_cell_size
         self.start = start
         self.end = end
         self.seconds = self.end - self.start
@@ -19,7 +18,7 @@ class ShuffleTimeCorrelationCalculator:
 
     def calc(self):
         for _ in range(self.SHUFFLE_COUNT):
-            random_engram_cells = np.random.randint(0, len(self.all_df.columns), size=len(self.engram_df.columns))
+            random_engram_cells = np.random.randint(0, len(self.all_df.columns), size=self.shuffle_cell_size)
             shuffled_cell_df = self.all_df.iloc[:, random_engram_cells].copy(deep=True)
 
             self.__calculate_shuffled(shuffled_cell_df)
