@@ -5,7 +5,7 @@ from time_correlation_tool import calculate_time_correlation, calculate_cell_cor
 
 
 class ShuffleTimeCorrelationCalculator:
-    SHUFFLE_COUNT = 10000
+    SHUFFLE_COUNT = 1000
 
     def __init__(self, all_df, shuffle_cell_size, start, end):
         self.all_df = all_df
