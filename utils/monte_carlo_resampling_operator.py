@@ -8,18 +8,20 @@ class MonteCarloResamplingOperator:
     MODEL_CODE = """
     data {
       int N;
-      vector[N] Y;
+      vector<lower=0>[N] Y;
     }
     
     parameters {
-      real mu;
-      real<lower=0> sigma;
+      real<lower=0> shape;
+      real<lower=0> rate;
+    }
+    
+    transformed parameters {
+      real mu = shape / rate;
     }
     
     model {
-      for (n in 1:N) {
-        Y[N] ~ normal(mu, sigma);
-      }
+      Y ~ gamma(shape, rate);
     }
     """
 
@@ -36,8 +38,11 @@ class MonteCarloResamplingOperator:
     def resampling(self, matrix):
         resampling_mu = np.array([])
         for index, items in matrix.iteritems():
+            item_size = len(items)
+            min_value = items.min()
+            items -= min_value
             stan_data = {
-                'N': len(items),
+                'N': item_size,
                 'Y': items.values.tolist()
             }
 
