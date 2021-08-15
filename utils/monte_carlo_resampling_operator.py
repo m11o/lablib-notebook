@@ -47,20 +47,10 @@ class MonteCarloResamplingOperator:
             }
 
             fit = self.model.sampling(data=stan_data, iter=3000, chains=3, warmup=1000)
-            mu = np.mean(fit.extract('mu')['mu'])
-            print(mu)
+            mu = np.mean(fit.extract('mu')['mu']) + min_value
             resampling_mu = np.append(resampling_mu, mu)
 
         return resampling_mu
-
-    def sampling(self, matrix):
-        stan_data = {
-            'N': len(matrix),
-            'M': len(matrix.columns),
-            'y': matrix.values.tolist()
-        }
-
-        return self.model.sampling(data=stan_data, iter=1000, chains=2, warmup=300)
 
     def __unify_df(self):
         for index, shuffle_df in enumerate(self.shuffle_calculator.shuffle_dfs):
