@@ -10,16 +10,16 @@ class MonteCarloResamplingOperator:
       int N;
       vector<lower=0>[N] Y;
     }
-    
+
     parameters {
       real<lower=0> shape;
       real<lower=0> rate;
     }
-    
+
     transformed parameters {
       real mu = shape / rate;
     }
-    
+
     model {
       Y ~ gamma(shape, rate);
     }
@@ -36,7 +36,7 @@ class MonteCarloResamplingOperator:
         self.model = stan.StanModel(model_code=self.MODEL_CODE)
 
     def resampling(self, matrix):
-        resampling_mu = np.array([])
+        resampling_mu = []
         for _, items in matrix.iteritems():
             item_size = len(items)
             min_value = items.min()
@@ -48,7 +48,7 @@ class MonteCarloResamplingOperator:
 
             fit = self.model.sampling(data=stan_data, iter=3000, chains=3, warmup=1000)
             mu = np.mean(fit.extract('mu')['mu']) + min_value
-            resampling_mu = np.append(resampling_mu, mu)
+            resampling_mu.append(mu)
 
         return resampling_mu
 
