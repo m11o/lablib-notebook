@@ -37,7 +37,7 @@ class MonteCarloResamplingOperator:
 
     def resampling(self, matrix):
         resampling_mu = np.array([])
-        for index, items in matrix.iteritems():
+        for _, items in matrix.iteritems():
             item_size = len(items)
             min_value = items.min()
             items -= min_value
