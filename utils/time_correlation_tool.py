@@ -27,26 +27,7 @@ def build_cell_correlation_df(df, start, end):
     return cell_correlations_df
 
 
-def calculate_time_correlation(seconds, time_correlation_df, cell_correlation_dfs):
-    for i in range(seconds):
-        i_time_data = cell_correlation_dfs[i]
-
-        for j in range(seconds):
-            j_time_data = cell_correlation_dfs[j]
-
-            if time_correlation_df.at[j, i] is not np.nan:
-                time_correlation_df.at[i, j] = time_correlation_df.at[j, i]
-                continue
-
-            cell_count = len(i_time_data)
-            calculated_values = i_time_data * j_time_data
-            corr_sum = (calculated_values - (calculated_values * np.eye(len(calculated_values)))).sum().sum()
-            if time_correlation_df.at[i, j] is np.nan:
-                time_correlation_df.at[i, j] = 0.0
-            time_correlation_df.at[i, j] += corr_sum / (cell_count * (cell_count - 1))
-
-
-def calculate_shuffle_time_correlation(cell_correlation_df):
+def calculate_time_correlation(cell_correlation_df):
     cell_size = sqrt(len(cell_correlation_df.columns))
     return (np.dot(cell_correlation_df, cell_correlation_df.T)) / (cell_size * (cell_size - 1))
 
