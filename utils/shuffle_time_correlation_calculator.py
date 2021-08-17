@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from time_correlation_tool import calculate_time_correlation, calculate_cell_correlation
+from time_correlation_tool import calculate_shuffle_time_correlation, build_cell_correlation_df
 
 
 class ShuffleTimeCorrelationCalculator:
@@ -24,14 +24,11 @@ class ShuffleTimeCorrelationCalculator:
             self.__calculate_shuffled(shuffled_cell_df)
 
     def __calculate_shuffled(self, shuffle_df):
-        time_correlation_df = pd.DataFrame(columns=list(range(self.seconds)), index=list(range(self.seconds)))
+        shuffle_cell_correlations = build_cell_correlation_df(shuffle_df, self.start, self.end)
 
-        shuffle_cell_correlations = []
-        for second in range(self.start, self.end):
-            frame_index = second * 10
-            shuffle_corr = calculate_cell_correlation(shuffle_df, frame_index)
-
-            shuffle_cell_correlations.append(shuffle_corr)
-
-        calculate_time_correlation(self.seconds, time_correlation_df, shuffle_cell_correlations)
+        time_correlation_df = pd.DataFrame(
+            calculate_shuffle_time_correlation(shuffle_cell_correlations),
+            columns=list(range(self.seconds)),
+            index=list(range(self.seconds))
+        )
         self.shuffle_dfs.append(time_correlation_df)
