@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from time_correlation_tool import calculate_shuffle_time_correlation, build_cell_correlation_df
+from time_correlation_tool import calculate_time_correlation, build_cell_correlation_df
 
 
 class ShuffleTimeCorrelationCalculator:
@@ -27,7 +27,7 @@ class ShuffleTimeCorrelationCalculator:
         shuffle_cell_correlations = build_cell_correlation_df(shuffle_df, self.start, self.end)
 
         time_correlation_df = pd.DataFrame(
-            calculate_shuffle_time_correlation(shuffle_cell_correlations),
+            calculate_time_correlation(shuffle_cell_correlations),
             columns=list(range(self.seconds)),
             index=list(range(self.seconds))
         )
