@@ -16,12 +16,12 @@ class MonteCarloResamplingOperator:
       real<lower=0> rate;
     }
 
-    transformed parameters {
-      real mu = shape / rate;
-    }
-
     model {
       Y ~ gamma(shape, rate);
+    }
+    
+    generated quantities {
+      real mu = shape / rate;
     }
     """
 
