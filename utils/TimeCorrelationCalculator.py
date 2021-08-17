@@ -2,7 +2,7 @@ import pandas as pd
 
 from context_data_csv import ContextDataCSV
 from matrix_optimizer import MatrixOptimizer
-from time_correlation_tool import calculate_cell_correlation, calculate_time_correlation
+from time_correlation_tool import calculate_time_correlation, build_cell_correlation_df
 from shuffle_time_correlation_calculator import ShuffleTimeCorrelationCalculator
 
 
@@ -34,21 +34,19 @@ class TimeCorrelationCalculator:
         self.__dropna_and_fillna(engram_df)
         self.__dropna_and_fillna(non_engram_df)
 
-        corr_df_for_engram = pd.DataFrame(columns=list(range(seconds)), index=list(range(seconds)))
-        corr_df_for_non_engram = pd.DataFrame(columns=list(range(seconds)), index=list(range(seconds)))
+        engram_cell_correlations = build_cell_correlation_df(engram_df, start, end)
+        corr_df_for_engram = pd.DataFrame(
+            calculate_time_correlation(engram_cell_correlations),
+            columns=list(range(seconds)),
+            index=list(range(seconds))
+        )
 
-        engram_cells_correlations = []
-        non_engram_cells_correlations = []
-        for second in range(start, end):
-            frame_index = second * 10
-            engram_corr = calculate_cell_correlation(engram_df, frame_index)
-            non_engram_corr = calculate_cell_correlation(non_engram_df, frame_index)
-
-            engram_cells_correlations.append(engram_corr)
-            non_engram_cells_correlations.append(non_engram_corr)
-
-        calculate_time_correlation(seconds, corr_df_for_engram, engram_cells_correlations)
-        calculate_time_correlation(seconds, corr_df_for_non_engram, non_engram_cells_correlations)
+        non_engram_cell_correlations = build_cell_correlation_df(non_engram_df, start, end)
+        corr_df_for_non_engram = pd.DataFrame(
+            calculate_time_correlation(non_engram_cell_correlations),
+            columns=list(range(seconds)),
+            index=list(range(seconds))
+        )
 
         shuffle_calculator = ShuffleTimeCorrelationCalculator(df, len(engram_df.columns), start, end)
         shuffle_calculator.calc()
