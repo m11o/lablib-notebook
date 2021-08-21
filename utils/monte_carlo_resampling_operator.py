@@ -23,29 +23,40 @@ class MonteCarloResamplingOperator:
 
     generated quantities {
       real mu = shape / rate + min_value;
-      vector<lower=0>[N] Y_s = gamma_rng(shape, rate);
+      real mode = (shape - 1.0) / rate + min_value;
+      
+      vector[N] Y_s;
+      for (n in 1:N) {
+        Y_s[n] = gamma_rng(shape, rate) + min_value;
+      }
     }
     """
 
     MIN_VALUE_BUFFER = 1.0e-10
+    DEFAULT_ITERATION_COUNT = 1000
+    DEFAULT_CHAINS = 3
+    DEFAULT_WARMUP = 300
 
     def __init__(self):
         self.model = stan.StanModel(model_code=self.MODEL_CODE)
 
-    def resampling(self, matrix):
-        resampling_mu = []
+    def resamplings(self, matrix):
+        resampling_mode = []
         for _, items in matrix.iteritems():
-            item_size = len(items)
-            min_value = items.min() - self.MIN_VALUE_BUFFER
-            items -= min_value
-            stan_data = {
-                'N': item_size,
-                'Y': items.values.tolist(),
-                'min_value': min_value
-            }
+            fit = self.resampling(items)
+            mode = np.mean(fit.extract('mode')['mode'])
+            resampling_mode.append(mode)
 
-            fit = self.model.sampling(data=stan_data, iter=1000, chains=3, warmup=300)
-            mu = np.mean(fit.extract('mu')['mu'])
-            resampling_mu.append(mu)
+        return pd.DataFrame(np.array(resampling_mode).reshape(40, 40))
 
-        return pd.DataFrame(np.array(resampling_mu).reshape(40, 40))
+    def resampling(self, series: pd.Series, iterator=DEFAULT_ITERATION_COUNT, chains=DEFAULT_CHAINS, warmup=DEFAULT_WARMUP):
+        item_size = len(series)
+        min_value = series.min() - self.MIN_VALUE_BUFFER
+        series -= min_value
+        stan_data = {
+            'N': item_size,
+            'Y': series.values.tolist(),
+            'min_value': min_value
+        }
+
+        return self.model.sampling(data=stan_data, iter=iterator, chains=chains, warmup=warmup)
