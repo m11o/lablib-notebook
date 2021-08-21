@@ -14,7 +14,7 @@ class ShuffleTimeCorrelationCalculator:
         self.end = end
         self.seconds = self.end - self.start
 
-        self.shuffle_dfs = []
+        self.shuffle_dfs = self.__build_data_frame()
 
     def calc(self):
         for _ in range(self.SHUFFLE_COUNT):
@@ -31,4 +31,9 @@ class ShuffleTimeCorrelationCalculator:
             columns=list(range(self.seconds)),
             index=list(range(self.seconds))
         )
-        self.shuffle_dfs.append(time_correlation_df)
+        self.shuffle_dfs.iloc[index, :] = time_correlation_df.to_numpy().ravel()
+
+    def __build_data_frame(self):
+        df_index = list(range(self.SHUFFLE_COUNT))
+        df_columns = list(range(self.seconds ** 2))
+        return pd.DataFrame(index=df_index, columns=df_columns)

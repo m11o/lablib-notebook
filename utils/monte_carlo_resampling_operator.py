@@ -9,6 +9,7 @@ class MonteCarloResamplingOperator:
     data {
       int N;
       vector<lower=0>[N] Y;
+      real min_value;
     }
 
     parameters {
@@ -19,38 +20,35 @@ class MonteCarloResamplingOperator:
     model {
       Y ~ gamma(shape, rate);
     }
-    
+
     generated quantities {
-      real mu = shape / rate;
+      real mu = shape / rate + min_value;
+      vector<lower=0>[N] Y_s = gamma_rng(shape, rate);
     }
     """
 
-    def __init__(self, shuffle_calculator):
-        df_index = list(range(len(shuffle_calculator.shuffle_dfs)))
-        df_columns = list(range(len(shuffle_calculator.shuffle_dfs[0].columns) ** 2))
-        self.df = pd.DataFrame(index=df_index, columns=df_columns)
+    MIN_VALUE_BUFFER = 1.0e-10
 
-        self.shuffle_calculator = shuffle_calculator
-        self.__unify_df()
-
+    def __init__(self):
         self.model = stan.StanModel(model_code=self.MODEL_CODE)
 
     def resampling(self, matrix):
         resampling_mu = []
         for _, items in matrix.iteritems():
             item_size = len(items)
-            min_value = items.min()
+            min_value = items.min() - self.MIN_VALUE_BUFFER
             items -= min_value
             stan_data = {
                 'N': item_size,
-                'Y': items.values.tolist()
+                'Y': items.values.tolist(),
+                'min_value': min_value
             }
 
-            fit = self.model.sampling(data=stan_data, iter=3000, chains=3, warmup=1000)
-            mu = np.mean(fit.extract('mu')['mu']) + min_value
+            fit = self.model.sampling(data=stan_data, iter=1000, chains=3, warmup=300)
+            mu = np.mean(fit.extract('mu')['mu'])
             resampling_mu.append(mu)
 
-        return resampling_mu
+        return pd.DataFrame(np.array(resampling_mu).reshape(40, 40))
 
     def __unify_df(self):
         for index, shuffle_df in enumerate(self.shuffle_calculator.shuffle_dfs):
