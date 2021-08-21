@@ -49,7 +49,3 @@ class MonteCarloResamplingOperator:
             resampling_mu.append(mu)
 
         return pd.DataFrame(np.array(resampling_mu).reshape(40, 40))
-
-    def __unify_df(self):
-        for index, shuffle_df in enumerate(self.shuffle_calculator.shuffle_dfs):
-            self.df.iloc[index, :] = shuffle_df.to_numpy().ravel()
