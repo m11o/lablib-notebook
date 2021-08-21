@@ -17,13 +17,13 @@ class ShuffleTimeCorrelationCalculator:
         self.shuffle_dfs = self.__build_data_frame()
 
     def calc(self):
-        for _ in range(self.SHUFFLE_COUNT):
+        for index in range(self.SHUFFLE_COUNT):
             random_engram_cells = np.random.randint(0, len(self.all_df.columns), size=self.shuffle_cell_size)
             shuffled_cell_df = self.all_df.iloc[:, random_engram_cells].copy(deep=True)
 
-            self.__calculate_shuffled(shuffled_cell_df)
+            self.__calculate_shuffled(shuffled_cell_df, index)
 
-    def __calculate_shuffled(self, shuffle_df):
+    def __calculate_shuffled(self, shuffle_df, index):
         shuffle_cell_correlations = build_cell_correlation_df(shuffle_df, self.start, self.end)
 
         time_correlation_df = pd.DataFrame(
