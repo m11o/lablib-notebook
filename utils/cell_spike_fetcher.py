@@ -22,6 +22,8 @@ class CellSpikeFetcher:
         if spike_series.isnull().all():
             return np.zeros(len(spike_series))
 
+        spike_series.fillna(0.0, inplace=True)
+
         _c, spikes, _b, _g, _lam = deconvolve(spike_series.to_numpy(), g=(None, None), penalty=1)
         spikes[spikes <= self.spike_threshold] = 0.0
 
