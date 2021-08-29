@@ -21,3 +21,7 @@ def dropped_unique_cells(cells1, cells2):
 
 def calc_event_rate(spikes, second, threshold=0.0):
     return len(spikes[spikes > threshold]) / second
+
+
+def is_all_zeros_constant_array(array):
+    return np.all(array == 0.0)
