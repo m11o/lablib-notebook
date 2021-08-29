@@ -9,8 +9,8 @@ services:
       options:
         max-size: "200k"
     volumes:
-       - ./notebooks:/opt/notebooks:cached
-       - .:/app:cached
+       - ./notebooks:/opt/notebooks
+       - .:/app
        - notebooks:/app/notebooks
     ports:
       - "3000:3000"
