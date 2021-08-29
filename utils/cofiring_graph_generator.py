@@ -9,9 +9,9 @@ class CofiringGraphGenerator:
     SPIKE_THRESHOLD = 0.05
     PEARSON_R_THRESHOLD = 0.1
 
-    def __init__(self, matrix: pd.DataFrame, is_engram):
+    def __init__(self, matrix: pd.DataFrame, is_colored):
         self.matrix = matrix
-        self.is_engram = is_engram
+        self.is_colored = is_colored
 
         self.spike_fetcher = CellSpikeFetcher(self.SPIKE_THRESHOLD)
 
@@ -45,13 +45,13 @@ class CofiringGraphGenerator:
 
     def __optimize_correlation_df(self, corr_df):
         corr_df[corr_df < self.PEARSON_R_THRESHOLD] = 0.0
-        corr_df.fillna(0.0, inplace=True)
         corr_df -= np.eye(len(corr_df))
+        corr_df.fillna(0.0, inplace=True)
 
         return corr_df
 
     def __cell_color_name(self, cell_name):
-        if self.is_engram(cell_name):
+        if self.is_colored(cell_name):
             return 'firebrick'
         else:
             return 'royalblue'
