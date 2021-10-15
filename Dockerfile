@@ -4,7 +4,7 @@ RUN apt-get update
 RUN apt-get install -y build-essential wget vim
 
 RUN conda install -y setuptools && \
-    conda install -y -c conda-forge arviz
+    conda install -y -c conda-forge arviz umap-learn
 RUN conda update --all
 
 RUN conda install -y pystan
