@@ -5,3 +5,6 @@ notebooks/sulfur/resources/**/*
 notebooks/fluorine/resources/**/*
 **/.ipynb_checkpoints
 **/__pycache__
+
+.vscode
+.devcontainer
