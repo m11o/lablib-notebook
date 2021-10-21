@@ -50,3 +50,17 @@ def convert_polar_df(df, xy_df):
     polar_df[(None, 'distance_by_frame')] = distance_by_frame
 
     return polar_df
+
+def fetch_freezing_frames(xy_df):
+    freezing_df = xy_df.loc[:, ['FZ', 'conseq FZ']]
+    for row_name, (fz, cons_fz) in freezing_df.iterrows():
+        if cons_fz < 4:
+            freezing_df.loc[row_name, 'FZ'] = 0
+            continue
+
+        if cons_fz == 4:
+            freezing_df.loc[row_name-3:row_name+1, 'FZ'] = 1
+        else:
+            freezing_df.loc[row_name, 'FZ'] = 1
+
+    return freezing_df.loc[:, 'FZ']
