@@ -47,6 +47,6 @@ def convert_polar_df(df, xy_df):
 
         polar_df.loc[:, (body_part, 'distance')] = distance
         polar_df.loc[:, (body_part, 'theta')] = theta
-    polar_df[(None, 'distance_by_frane')] = distance_by_frame
+    polar_df[(None, 'distance_by_frame')] = distance_by_frame
 
     return polar_df
