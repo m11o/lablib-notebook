@@ -35,6 +35,7 @@ def convert_polar_df(df, xy_df):
     centroid_x = xy_df.loc[:, 'X']
     centroid_y = xy_df.loc[:, 'Y']
     distance_by_frame = xy_df.loc[:, 'Distance']
+    area_by_frame = xy_df.loc[:, 'AREA']
 
     for body_part in body_parts:
         x = df.loc[:, (body_part, 'x')]
@@ -48,6 +49,7 @@ def convert_polar_df(df, xy_df):
         polar_df.loc[:, (body_part, 'distance')] = distance
         polar_df.loc[:, (body_part, 'theta')] = theta
     polar_df[(None, 'distance_by_frame')] = distance_by_frame
+    polar_df[(None, 'area_by_frame')] = area_by_frame
 
     return polar_df
 
